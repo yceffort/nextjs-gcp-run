@@ -19,17 +19,20 @@ FROM node:16-alpine AS runner
 WORKDIR /app
 
 ENV NODE_ENV production
+ENV PORT 3000
+
+RUN addgroup --system --gid 1001 nodejs
+RUN adduser --system --uid 1001 nextjs
 
 COPY --from=build /app/.next ./.next
 COPY --from=build /app/public ./public
 COPY --from=build /app/node_modules ./node_modules
 COPY --from=build /app/package.json ./package.json
 
-RUN addgroup -g 1001 -S nodejs
-RUN adduser -S nextjs -u 1001
 RUN chown -R nextjs:nodejs /app/.next
 
 USER nextjs
+
 EXPOSE 3000
 
 CMD ["npm", "start"]
